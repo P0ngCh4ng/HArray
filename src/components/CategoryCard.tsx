@@ -1,5 +1,5 @@
 import { Category, vocabulary } from '../data/vocabulary';
-import { useProgress } from '../hooks/useProgress';
+import { useProgress, getMasteryLevel } from '../hooks/useProgress';
 
 const CATEGORY_EMOJI: Record<Category, string> = {
   'あいさつ': '👋',
@@ -22,8 +22,11 @@ interface Props {
 export function CategoryCard({ category, onSelect }: Props) {
   const { progress } = useProgress();
   const words = vocabulary.filter(w => w.category === category);
+  const mastered = words.filter(w => getMasteryLevel(
+    progress[w.id] ?? { correct: 0, incorrect: 0, lastStudied: 0 }
+  ) === 3).length;
   const studied = words.filter(w => progress[w.id]).length;
-  const pct = Math.round((studied / words.length) * 100);
+  const pct = Math.round((mastered / words.length) * 100);
 
   return (
     <button
@@ -39,7 +42,10 @@ export function CategoryCard({ category, onSelect }: Props) {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <p className="text-xs text-gray-400 mt-1">{studied}/{words.length} 学習済み</p>
+      <p className="text-xs text-gray-400 mt-1">
+        習得 {mastered}/{words.length}
+        {studied > mastered && <span className="text-yellow-500 ml-1">（学習中 {studied - mastered}）</span>}
+      </p>
     </button>
   );
 }

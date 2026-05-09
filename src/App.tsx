@@ -2,61 +2,74 @@ import { useState } from 'react';
 import { vocabulary, categories, Category } from './data/vocabulary';
 import { CategoryCard } from './components/CategoryCard';
 import { TypingQuiz } from './components/TypingQuiz';
+import { FlashCard } from './components/FlashCard';
+import { MultipleChoice } from './components/MultipleChoice';
 import { WordList } from './components/WordList';
 import { useProgress } from './hooks/useProgress';
+import { useStreak } from './hooks/useStreak';
+
+type Mode = 'flashcard' | 'choice' | 'typing';
 
 type Screen =
   | { type: 'home' }
-  | { type: 'category'; category: Category }
-  | { type: 'quiz'; category: Category | 'all' }
+  | { type: 'category'; category: Category | 'all' }
+  | { type: 'study'; category: Category | 'all'; mode: Mode }
   | { type: 'list'; category: Category | 'all' };
+
+const MODE_LABELS: Record<Mode, { icon: string; label: string; desc: string }> = {
+  flashcard: { icon: '🃏', label: 'フラッシュカード', desc: 'カードをめくって確認' },
+  choice:    { icon: '🔤', label: '4択クイズ',        desc: '4つから正解を選ぶ' },
+  typing:    { icon: '✏️', label: 'タイピング',        desc: '意味を入力して回答' },
+};
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>({ type: 'home' });
   const { totalStudied, accuracy, resetProgress } = useProgress();
+  const { streak, checkIn } = useStreak();
 
   const wordsFor = (cat: Category | 'all') =>
     cat === 'all' ? vocabulary : vocabulary.filter(w => w.category === cat);
 
-  if (screen.type === 'quiz') {
+  const goBack = (cat: Category | 'all') =>
+    setScreen(cat === 'all' ? { type: 'home' } : { type: 'category', category: cat });
+
+  // Study screens
+  if (screen.type === 'study') {
+    const words = wordsFor(screen.category);
+    const onComplete = () => checkIn();
+    const onBack = () => goBack(screen.category);
+    const header = (
+      <header className="bg-white border-b px-4 py-3 flex items-center gap-3">
+        <button onClick={onBack} className="text-gray-500 hover:text-gray-700">←</button>
+        <h1 className="font-bold text-gray-800">
+          {screen.category === 'all' ? '全単語' : screen.category} — {MODE_LABELS[screen.mode].label}
+        </h1>
+      </header>
+    );
+
     return (
       <div className="min-h-screen bg-gray-50">
-        <header className="bg-white border-b px-4 py-3 flex items-center gap-3">
-          <button
-            onClick={() =>
-              setScreen(screen.category === 'all' ? { type: 'home' } : { type: 'category', category: screen.category as Category })
-            }
-            className="text-gray-500 hover:text-gray-700"
-          >
-            ←
-          </button>
-          <h1 className="font-bold text-gray-800">
-            {screen.category === 'all' ? '全単語' : screen.category} クイズ
-          </h1>
-        </header>
-        <TypingQuiz
-          words={wordsFor(screen.category)}
-          onBack={() =>
-            setScreen(screen.category === 'all' ? { type: 'home' } : { type: 'category', category: screen.category as Category })
-          }
-        />
+        {header}
+        {screen.mode === 'flashcard' && (
+          <FlashCard words={words} onBack={onBack} onComplete={onComplete} />
+        )}
+        {screen.mode === 'choice' && (
+          <MultipleChoice words={words} onBack={onBack} onComplete={onComplete} />
+        )}
+        {screen.mode === 'typing' && (
+          <TypingQuiz words={words} onBack={onBack} onComplete={onComplete} />
+        )}
       </div>
     );
   }
 
+  // Word list
   if (screen.type === 'list') {
     const words = wordsFor(screen.category);
     return (
       <div className="min-h-screen bg-gray-50">
         <header className="bg-white border-b px-4 py-3 flex items-center gap-3">
-          <button
-            onClick={() =>
-              setScreen(screen.category === 'all' ? { type: 'home' } : { type: 'category', category: screen.category as Category })
-            }
-            className="text-gray-500 hover:text-gray-700"
-          >
-            ←
-          </button>
+          <button onClick={() => goBack(screen.category)} className="text-gray-500 hover:text-gray-700">←</button>
           <h1 className="font-bold text-gray-800">
             {screen.category === 'all' ? '全単語' : screen.category} 一覧 ({words.length}語)
           </h1>
@@ -68,30 +81,45 @@ export default function App() {
     );
   }
 
+  // Category screen
   if (screen.type === 'category') {
     const { category } = screen;
-    const words = wordsFor(category);
     return (
       <div className="min-h-screen bg-gray-50">
         <header className="bg-white border-b px-4 py-3 flex items-center gap-3">
-          <button onClick={() => setScreen({ type: 'home' })} className="text-gray-500 hover:text-gray-700">
-            ←
-          </button>
-          <h1 className="font-bold text-gray-800">{category}</h1>
+          <button onClick={() => setScreen({ type: 'home' })} className="text-gray-500 hover:text-gray-700">←</button>
+          <h1 className="font-bold text-gray-800">
+            {category === 'all' ? '全単語' : category}
+          </h1>
         </header>
-        <div className="px-4 py-6 max-w-lg mx-auto space-y-4">
-          <p className="text-gray-500 text-center">{words.length}単語</p>
-          <button
-            onClick={() => setScreen({ type: 'quiz', category })}
-            className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-lg hover:bg-indigo-700 transition-colors shadow-sm"
-          >
-            ✏️ タイピングクイズ
-          </button>
+        <div className="px-4 py-6 max-w-lg mx-auto space-y-3">
+          <p className="text-gray-400 text-center text-sm mb-4">{wordsFor(category).length}単語 — 学習モードを選択</p>
+
+          {(Object.entries(MODE_LABELS) as [Mode, typeof MODE_LABELS[Mode]][]).map(([mode, info]) => (
+            <button
+              key={mode}
+              onClick={() => setScreen({ type: 'study', category, mode })}
+              className="w-full flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-left active:scale-95"
+            >
+              <span className="text-3xl">{info.icon}</span>
+              <div>
+                <p className="font-bold text-gray-800">{info.label}</p>
+                <p className="text-sm text-gray-400">{info.desc}</p>
+              </div>
+              <span className="ml-auto text-gray-300">›</span>
+            </button>
+          ))}
+
           <button
             onClick={() => setScreen({ type: 'list', category })}
-            className="w-full py-4 bg-white text-gray-700 rounded-2xl font-semibold text-lg hover:bg-gray-50 transition-colors shadow-sm border border-gray-200"
+            className="w-full flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-left active:scale-95"
           >
-            📖 単語一覧
+            <span className="text-3xl">📖</span>
+            <div>
+              <p className="font-bold text-gray-800">単語一覧</p>
+              <p className="text-sm text-gray-400">全単語を確認する</p>
+            </div>
+            <span className="ml-auto text-gray-300">›</span>
           </button>
         </div>
       </div>
@@ -101,9 +129,17 @@ export default function App() {
   // Home screen
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b px-4 py-4">
-        <h1 className="text-2xl font-bold text-indigo-600">한국어 단어장</h1>
-        <p className="text-sm text-gray-400">韓国語単語帳</p>
+      <header className="bg-white border-b px-4 py-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-indigo-600">한국어 단어장</h1>
+          <p className="text-sm text-gray-400">韓国語単語帳</p>
+        </div>
+        {streak > 0 && (
+          <div className="flex items-center gap-1 bg-orange-50 px-3 py-1.5 rounded-full">
+            <span className="text-lg">🔥</span>
+            <span className="font-bold text-orange-600">{streak}日</span>
+          </div>
+        )}
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
@@ -124,27 +160,23 @@ export default function App() {
         </div>
 
         {/* Quick start */}
-        <div className="flex gap-3">
-          <button
-            onClick={() => setScreen({ type: 'quiz', category: 'all' })}
-            className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-bold text-base hover:bg-indigo-700 transition-colors shadow-sm"
-          >
-            ✏️ 全単語クイズ
-          </button>
-          <button
-            onClick={() => setScreen({ type: 'list', category: 'all' })}
-            className="flex-1 py-4 bg-white text-gray-700 rounded-2xl font-semibold text-base hover:bg-gray-50 transition-colors shadow-sm border border-gray-200"
-          >
-            📖 全単語一覧
-          </button>
-        </div>
+        <button
+          onClick={() => setScreen({ type: 'category', category: 'all' })}
+          className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-lg hover:bg-indigo-700 transition-colors shadow-sm"
+        >
+          📚 全単語で学習する
+        </button>
 
         {/* Categories */}
         <div>
-          <h2 className="text-lg font-bold text-gray-700 mb-3">カテゴリ</h2>
+          <h2 className="text-lg font-bold text-gray-700 mb-3">カテゴリ別</h2>
           <div className="grid grid-cols-2 gap-3">
             {categories.map(cat => (
-              <CategoryCard key={cat} category={cat} onSelect={c => setScreen({ type: 'category', category: c })} />
+              <CategoryCard
+                key={cat}
+                category={cat}
+                onSelect={c => setScreen({ type: 'category', category: c })}
+              />
             ))}
           </div>
         </div>

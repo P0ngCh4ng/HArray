@@ -1,9 +1,12 @@
 import { Word } from '../data/vocabulary';
-import { useProgress } from '../hooks/useProgress';
+import { useProgress, getMasteryLevel } from '../hooks/useProgress';
 
 interface Props {
   words: Word[];
 }
+
+const STARS = ['☆☆☆', '★☆☆', '★★☆', '★★★'];
+const STAR_COLORS = ['text-gray-300', 'text-yellow-400', 'text-yellow-400', 'text-yellow-500'];
 
 export function WordList({ words }: Props) {
   const { getWordProgress } = useProgress();
@@ -12,8 +15,7 @@ export function WordList({ words }: Props) {
     <div className="space-y-2 px-4">
       {words.map(word => {
         const p = getWordProgress(word.id);
-        const attempts = p.correct + p.incorrect;
-        const accuracy = attempts > 0 ? Math.round((p.correct / attempts) * 100) : null;
+        const mastery = getMasteryLevel(p);
 
         return (
           <div
@@ -31,11 +33,9 @@ export function WordList({ words }: Props) {
               <span className="text-xs text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-full">
                 {word.category}
               </span>
-              {accuracy !== null && (
-                <span className={`text-xs font-medium ${accuracy >= 70 ? 'text-green-600' : accuracy >= 40 ? 'text-yellow-600' : 'text-red-500'}`}>
-                  正解率 {accuracy}%
-                </span>
-              )}
+              <span className={`text-sm font-medium ${STAR_COLORS[mastery]}`}>
+                {STARS[mastery]}
+              </span>
             </div>
           </div>
         );

@@ -12,8 +12,8 @@ interface SessionAttempt {
   correct: number;
 }
 
-// 2連続正解で「習得」
-const GRADUATION_STREAK = 2;
+// 1回正解で「習得」（不正解なら再挿入して繰り返す）
+const GRADUATION_STREAK = 1;
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];

@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Word } from '../data/vocabulary';
+import { useSpeech } from '../hooks/useSpeech';
+import { SpeakButton } from './SpeakButton';
 
 interface Props {
   words: Word[];
@@ -9,8 +11,14 @@ interface Props {
 
 export function IntroCards({ words, onComplete, onBack }: Props) {
   const [index, setIndex] = useState(0);
+  const { speak } = useSpeech();
   const word = words[index];
   const isLast = index === words.length - 1;
+
+  // カード切り替え時に自動読み上げ
+  useEffect(() => {
+    speak(word.korean);
+  }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const next = () => {
     if (isLast) onComplete();
@@ -35,7 +43,7 @@ export function IntroCards({ words, onComplete, onBack }: Props) {
 
       <p className="text-sm text-gray-400">新しい単語を覚えよう {index + 1}/{words.length}</p>
 
-      {/* Word card — all info visible */}
+      {/* Word card */}
       <div
         className="w-full bg-white rounded-3xl shadow-md p-8 text-center space-y-4 cursor-pointer active:scale-98 transition-transform"
         onClick={next}
@@ -44,7 +52,10 @@ export function IntroCards({ words, onComplete, onBack }: Props) {
           {word.category}
         </span>
 
-        <p className="text-6xl font-bold text-gray-900 font-korean leading-tight">{word.korean}</p>
+        <div className="flex items-center justify-center gap-3">
+          <p className="text-6xl font-bold text-gray-900 font-korean leading-tight">{word.korean}</p>
+          <SpeakButton text={word.korean} />
+        </div>
 
         <div className="border-t border-gray-100 pt-4 space-y-1">
           <p className="text-lg text-gray-400">{word.reading}</p>

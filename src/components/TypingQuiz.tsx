@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Word } from '../data/vocabulary';
 import { useAdaptiveQueue } from '../hooks/useAdaptiveQueue';
 import { SessionComplete } from './SessionComplete';
+import { SpeakButton } from './SpeakButton';
 
 interface Props {
   words: Word[];
@@ -94,7 +95,10 @@ export function TypingQuiz({ words, onBack, onComplete }: Props) {
         <span className="text-xs font-medium text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full">
           {current.word.category}
         </span>
-        <p className="text-5xl font-bold text-gray-900 mt-4 mb-2 font-korean">{current.word.korean}</p>
+        <div className="flex items-center justify-center gap-2 mt-4 mb-2">
+          <p className="text-5xl font-bold text-gray-900 font-korean">{current.word.korean}</p>
+          <SpeakButton text={current.word.korean} />
+        </div>
 
         {showReading || phase !== 'question' ? (
           <p className="text-gray-400">{current.word.reading}</p>

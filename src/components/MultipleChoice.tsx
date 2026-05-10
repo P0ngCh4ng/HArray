@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Word, vocabulary } from '../data/vocabulary';
 import { useAdaptiveQueue } from '../hooks/useAdaptiveQueue';
 import { SessionComplete } from './SessionComplete';
+import { SpeakButton } from './SpeakButton';
 
 interface Props {
   words: Word[];
@@ -107,7 +108,10 @@ export function MultipleChoice({ words, onBack, onComplete }: Props) {
         <span className="text-xs font-medium text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full">
           {current.word.category}
         </span>
-        <p className="text-5xl font-bold text-gray-900 mt-4 mb-2 font-korean">{current.word.korean}</p>
+        <div className="flex items-center justify-center gap-2 mt-4 mb-2">
+          <p className="text-5xl font-bold text-gray-900 font-korean">{current.word.korean}</p>
+          <SpeakButton text={current.word.korean} />
+        </div>
         <p className="text-gray-400">{current.word.reading}</p>
         {phase !== 'answering' && (
           <p className={`mt-3 font-semibold ${phase === 'correct' ? 'text-green-600' : 'text-red-600'}`}>

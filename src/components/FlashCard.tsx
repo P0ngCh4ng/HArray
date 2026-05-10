@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Word } from '../data/vocabulary';
 import { useAdaptiveQueue } from '../hooks/useAdaptiveQueue';
 import { SessionComplete } from './SessionComplete';
+import { SpeakButton } from './SpeakButton';
 
 interface Props {
   words: Word[];
@@ -85,7 +86,8 @@ export function FlashCard({ words, onBack, onComplete }: Props) {
               {current.word.category}
             </span>
             <p className="text-5xl font-bold text-gray-900 font-korean">{current.word.korean}</p>
-            <p className="text-sm text-gray-400 mt-2">タップして意味を確認</p>
+            <SpeakButton text={current.word.korean} className="mt-1" />
+            <p className="text-sm text-gray-400 mt-1">タップして意味を確認</p>
           </div>
 
           {/* Back */}

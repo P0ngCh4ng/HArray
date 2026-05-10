@@ -11,6 +11,7 @@ interface Props {
 }
 
 type Phase = 'question' | 'correct' | 'wrong';
+type Direction = 'kr-jp' | 'jp-kr';
 
 function normalize(s: string) {
   return s.trim().replace(/\s+/g, ' ');
@@ -22,13 +23,15 @@ export function TypingQuiz({ words, onBack, onComplete }: Props) {
 
   const [input, setInput] = useState('');
   const [phase, setPhase] = useState<Phase>('question');
-  const [showReading, setShowReading] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const [direction, setDirection] = useState<Direction>('kr-jp');
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setInput('');
     setPhase('question');
-    setShowReading(false);
+    setShowHint(false);
+    setDirection(Math.random() < 0.5 ? 'kr-jp' : 'jp-kr');
     inputRef.current?.focus();
   }, [current]);
 
@@ -36,9 +39,15 @@ export function TypingQuiz({ words, onBack, onComplete }: Props) {
     if (finished) onComplete?.();
   }, [finished, onComplete]);
 
+  const correctAnswer = current
+    ? direction === 'kr-jp'
+      ? current.word.meaning
+      : current.word.reading
+    : '';
+
   const check = () => {
     if (phase !== 'question' || !input.trim() || !current) return;
-    const correct = normalize(input) === normalize(current.word.meaning);
+    const correct = normalize(input) === normalize(correctAnswer);
     setPhase(correct ? 'correct' : 'wrong');
   };
 
@@ -92,25 +101,47 @@ export function TypingQuiz({ words, onBack, onComplete }: Props) {
         : phase === 'wrong' ? 'bg-red-50 border-2 border-red-400'
         : 'bg-white'
       }`}>
-        <span className="text-xs font-medium text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full">
-          {current.word.category}
+        {/* Direction badge */}
+        <span className="inline-block text-xs font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full mb-3">
+          {direction === 'kr-jp' ? '韓 → 日' : '日 → 韓'}
         </span>
-        <div className="flex items-center justify-center gap-2 mt-4 mb-2">
-          <p className="text-5xl font-bold text-gray-900 font-korean">{current.word.korean}</p>
-          <SpeakButton text={current.word.korean} />
-        </div>
 
-        {showReading || phase !== 'question' ? (
-          <p className="text-gray-400">{current.word.reading}</p>
+        {direction === 'kr-jp' ? (
+          <>
+            <span className="block text-xs font-medium text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full mb-4">
+              {current.word.category}
+            </span>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <p className="text-5xl font-bold text-gray-900 font-korean">{current.word.korean}</p>
+              <SpeakButton text={current.word.korean} />
+            </div>
+            {showHint || phase !== 'question' ? (
+              <p className="text-gray-400">{current.word.reading}</p>
+            ) : (
+              <button onClick={() => setShowHint(true)} className="text-sm text-gray-300 hover:text-indigo-400 underline">
+                読み方を表示
+              </button>
+            )}
+          </>
         ) : (
-          <button onClick={() => setShowReading(true)} className="text-sm text-gray-300 hover:text-indigo-400 underline">
-            読み方を表示
-          </button>
+          <>
+            <span className="block text-xs font-medium text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full mb-4">
+              {current.word.category}
+            </span>
+            <p className="text-4xl font-bold text-gray-800 mb-2">{current.word.meaning}</p>
+            {showHint || phase !== 'question' ? (
+              <p className="text-2xl font-bold text-gray-900 font-korean mt-1">{current.word.korean}</p>
+            ) : (
+              <button onClick={() => setShowHint(true)} className="text-sm text-gray-300 hover:text-indigo-400 underline">
+                韓国語を表示
+              </button>
+            )}
+          </>
         )}
 
         {phase !== 'question' && (
           <p className={`mt-3 font-semibold ${phase === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
-            {phase === 'correct' ? '✓ 正解！' : `✗ 正解：${current.word.meaning}`}
+            {phase === 'correct' ? '✓ 正解！' : `✗ 正解：${correctAnswer}`}
           </p>
         )}
       </div>
@@ -124,7 +155,7 @@ export function TypingQuiz({ words, onBack, onComplete }: Props) {
           onChange={e => setInput(e.target.value)}
           onKeyDown={handleKey}
           disabled={phase !== 'question'}
-          placeholder="日本語で意味を入力…"
+          placeholder={direction === 'kr-jp' ? '日本語で意味を入力…' : '読み方をカタカナで入力…'}
           className={`w-full px-4 py-3 rounded-xl border-2 text-lg outline-none transition-colors ${
             phase === 'correct' ? 'border-green-400 bg-green-50 text-green-700'
             : phase === 'wrong' ? 'border-red-400 bg-red-50 text-red-700'

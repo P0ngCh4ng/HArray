@@ -4,13 +4,12 @@ import { CategoryCard } from './components/CategoryCard';
 import { IntroCards } from './components/IntroCards';
 import { TypingQuiz } from './components/TypingQuiz';
 import { FlashCard } from './components/FlashCard';
-import { MultipleChoice } from './components/MultipleChoice';
 import { WordList } from './components/WordList';
 import { useProgress, getMasteryLevel } from './hooks/useProgress';
 import { useStreak } from './hooks/useStreak';
 import { Progress } from './context/ProgressContext';
 
-type Mode = 'flashcard' | 'choice' | 'typing';
+type Mode = 'flashcard' | 'typing';
 
 type Screen =
   | { type: 'home' }
@@ -21,8 +20,7 @@ type Screen =
 
 const MODE_LABELS: Record<Mode, { icon: string; label: string; desc: string }> = {
   flashcard: { icon: '🃏', label: 'フラッシュカード', desc: '見て覚える' },
-  choice:    { icon: '🔤', label: '4択クイズ',        desc: '4つから選ぶ' },
-  typing:    { icon: '✏️', label: 'タイピング',        desc: '意味を入力する' },
+  typing:    { icon: '✏️', label: 'タイピング',        desc: '韓↔日 入力で覚える' },
 };
 
 const SESSION_SIZES = [5, 10, 20, Infinity] as const;
@@ -90,7 +88,6 @@ export default function App() {
           <span className="text-sm text-gray-400 ml-auto">{words.length}語</span>
         </header>
         {mode === 'flashcard' && <FlashCard words={words} onBack={onBack} onComplete={onComplete} />}
-        {mode === 'choice'    && <MultipleChoice words={words} onBack={onBack} onComplete={onComplete} />}
         {mode === 'typing'    && <TypingQuiz words={words} onBack={onBack} onComplete={onComplete} />}
       </div>
     );
@@ -234,7 +231,7 @@ export default function App() {
         <button
           onClick={() => {
             setSessionSize(10);
-            startSession('all', 'choice', 10);
+            startSession('all', 'typing', 10);
           }}
           className="w-full bg-indigo-600 text-white rounded-2xl p-5 text-left hover:bg-indigo-700 transition-colors shadow-sm"
         >

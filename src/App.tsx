@@ -9,7 +9,7 @@ import { useProgress, getMasteryLevel } from './hooks/useProgress';
 import { useStreak } from './hooks/useStreak';
 import { Progress } from './context/ProgressContext';
 
-type Mode = 'flashcard' | 'typing';
+type Mode = 'flashcard' | 'typing-kr' | 'typing-jp' | 'typing-both';
 
 type Screen =
   | { type: 'home' }
@@ -19,8 +19,10 @@ type Screen =
   | { type: 'list'; category: Category | 'all' };
 
 const MODE_LABELS: Record<Mode, { icon: string; label: string; desc: string }> = {
-  flashcard: { icon: '🃏', label: 'フラッシュカード', desc: '見て覚える' },
-  typing:    { icon: '✏️', label: 'タイピング',        desc: '韓↔日 入力で覚える' },
+  flashcard:    { icon: '🃏', label: 'フラッシュカード', desc: '見て覚える' },
+  'typing-kr':  { icon: '🇰🇷', label: '韓 → 日',        desc: 'ハングルを見て意味を入力' },
+  'typing-jp':  { icon: '🇯🇵', label: '日 → 韓',        desc: '意味を見てハングルを入力' },
+  'typing-both':{ icon: '✏️',  label: '韓 ↔ 日',        desc: '両方向をランダムで出題' },
 };
 
 const SESSION_SIZES = [5, 10, 20, Infinity] as const;
@@ -87,8 +89,10 @@ export default function App() {
           <h1 className="font-bold text-gray-800">{MODE_LABELS[mode].label}</h1>
           <span className="text-sm text-gray-400 ml-auto">{words.length}語</span>
         </header>
-        {mode === 'flashcard' && <FlashCard words={words} onBack={onBack} onComplete={onComplete} />}
-        {mode === 'typing'    && <TypingQuiz words={words} onBack={onBack} onComplete={onComplete} />}
+        {mode === 'flashcard'     && <FlashCard words={words} onBack={onBack} onComplete={onComplete} />}
+        {mode === 'typing-kr'   && <TypingQuiz words={words} direction="kr-jp" onBack={onBack} onComplete={onComplete} />}
+        {mode === 'typing-jp'   && <TypingQuiz words={words} direction="jp-kr" onBack={onBack} onComplete={onComplete} />}
+        {mode === 'typing-both' && <TypingQuiz words={words} direction="both"  onBack={onBack} onComplete={onComplete} />}
       </div>
     );
   }
@@ -231,7 +235,7 @@ export default function App() {
         <button
           onClick={() => {
             setSessionSize(10);
-            startSession('all', 'typing', 10);
+            startSession('all', 'typing-both', 10);
           }}
           className="w-full bg-indigo-600 text-white rounded-2xl p-5 text-left hover:bg-indigo-700 transition-colors shadow-sm"
         >

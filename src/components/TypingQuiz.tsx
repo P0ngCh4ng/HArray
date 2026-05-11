@@ -6,6 +6,7 @@ import { SpeakButton } from './SpeakButton';
 
 interface Props {
   words: Word[];
+  direction: 'kr-jp' | 'jp-kr' | 'both';
   onBack: () => void;
   onComplete?: () => void;
 }
@@ -17,7 +18,7 @@ function normalize(s: string) {
   return s.trim().replace(/\s+/g, ' ');
 }
 
-export function TypingQuiz({ words, onBack, onComplete }: Props) {
+export function TypingQuiz({ words, direction: directionProp, onBack, onComplete }: Props) {
   const { current, graduated, total, finished, submitAnswer, restart, hardWords, sessionAccuracy } =
     useAdaptiveQueue(words);
 
@@ -31,7 +32,11 @@ export function TypingQuiz({ words, onBack, onComplete }: Props) {
     setInput('');
     setPhase('question');
     setShowHint(false);
-    setDirection(Math.random() < 0.5 ? 'kr-jp' : 'jp-kr');
+    setDirection(
+      directionProp === 'both'
+        ? Math.random() < 0.5 ? 'kr-jp' : 'jp-kr'
+        : directionProp
+    );
     inputRef.current?.focus();
   }, [current]);
 

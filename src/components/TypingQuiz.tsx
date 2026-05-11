@@ -42,7 +42,7 @@ export function TypingQuiz({ words, onBack, onComplete }: Props) {
   const correctAnswer = current
     ? direction === 'kr-jp'
       ? current.word.meaning
-      : current.word.reading
+      : current.word.korean
     : '';
 
   const check = () => {
@@ -130,10 +130,10 @@ export function TypingQuiz({ words, onBack, onComplete }: Props) {
             </span>
             <p className="text-4xl font-bold text-gray-800 mb-2">{current.word.meaning}</p>
             {showHint || phase !== 'question' ? (
-              <p className="text-2xl font-bold text-gray-900 font-korean mt-1">{current.word.korean}</p>
+              <p className="text-gray-400">{current.word.reading}</p>
             ) : (
               <button onClick={() => setShowHint(true)} className="text-sm text-gray-300 hover:text-indigo-400 underline">
-                韓国語を表示
+                読み方を表示
               </button>
             )}
           </>
@@ -155,7 +155,7 @@ export function TypingQuiz({ words, onBack, onComplete }: Props) {
           onChange={e => setInput(e.target.value)}
           onKeyDown={handleKey}
           disabled={phase !== 'question'}
-          placeholder={direction === 'kr-jp' ? '日本語で意味を入力…' : '読み方をカタカナで入力…'}
+          placeholder={direction === 'kr-jp' ? '日本語で意味を入力…' : 'ハングルで入力…'}
           className={`w-full px-4 py-3 rounded-xl border-2 text-lg outline-none transition-colors ${
             phase === 'correct' ? 'border-green-400 bg-green-50 text-green-700'
             : phase === 'wrong' ? 'border-red-400 bg-red-50 text-red-700'

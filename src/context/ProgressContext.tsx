@@ -7,12 +7,23 @@ export interface WordProgress {
 }
 
 export type Progress = Record<number, WordProgress>;
+export type Activity = Record<string, number>; // 'YYYY-MM-DD' → answer count
 
 const STORAGE_KEY = 'korean-vocab-progress';
+const ACTIVITY_KEY = 'korean-vocab-activity';
 
 function load(): Progress {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function loadActivity(): Activity {
+  try {
+    const raw = localStorage.getItem(ACTIVITY_KEY);
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
@@ -30,6 +41,7 @@ export function getMasteryLevel(p: WordProgress): 0 | 1 | 2 | 3 {
 
 interface ProgressCtx {
   progress: Progress;
+  activity: Activity;
   recordResult: (wordId: number, correct: boolean) => void;
   resetProgress: () => void;
   getWordProgress: (wordId: number) => WordProgress;
@@ -42,6 +54,7 @@ const Ctx = createContext<ProgressCtx | null>(null);
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
   const [progress, setProgress] = useState<Progress>(load);
+  const [activity, setActivity] = useState<Activity>(loadActivity);
 
   const recordResult = useCallback((wordId: number, correct: boolean) => {
     setProgress(prev => {
@@ -57,11 +70,19 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       return updated;
     });
+    setActivity(prev => {
+      const today = new Date().toISOString().slice(0, 10);
+      const next = { ...prev, [today]: (prev[today] ?? 0) + 1 };
+      localStorage.setItem(ACTIVITY_KEY, JSON.stringify(next));
+      return next;
+    });
   }, []);
 
   const resetProgress = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(ACTIVITY_KEY);
     setProgress({});
+    setActivity({});
   }, []);
 
   const getWordProgress = useCallback(
@@ -82,7 +103,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const accuracy = totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
 
   return (
-    <Ctx.Provider value={{ progress, recordResult, resetProgress, getWordProgress, getMastery, totalStudied, accuracy }}>
+    <Ctx.Provider value={{ progress, activity, recordResult, resetProgress, getWordProgress, getMastery, totalStudied, accuracy }}>
       {children}
     </Ctx.Provider>
   );

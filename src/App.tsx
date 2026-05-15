@@ -5,6 +5,7 @@ import { IntroCards } from './components/IntroCards';
 import { TypingQuiz } from './components/TypingQuiz';
 import { FlashCard } from './components/FlashCard';
 import { WordList } from './components/WordList';
+import { StatsPage } from './components/StatsPage';
 import { useProgress, getMasteryLevel } from './hooks/useProgress';
 import { useStreak } from './hooks/useStreak';
 import { Progress } from './context/ProgressContext';
@@ -13,6 +14,7 @@ type Mode = 'flashcard' | 'typing-kr' | 'typing-jp' | 'typing-both';
 
 type Screen =
   | { type: 'home' }
+  | { type: 'stats' }
   | { type: 'category'; category: Category | 'all' }
   | { type: 'intro'; words: Word[]; mode: Mode; returnTo: Category | 'all' }
   | { type: 'study'; words: Word[]; mode: Mode; returnTo: Category | 'all' }
@@ -57,6 +59,11 @@ export default function App() {
 
   const goBack = (to: Category | 'all') =>
     setScreen(to === 'all' ? { type: 'home' } : { type: 'category', category: to });
+
+  // Stats page
+  if (screen.type === 'stats') {
+    return <StatsPage onBack={() => setScreen({ type: 'home' })} />;
+  }
 
   // Intro phase
   if (screen.type === 'intro') {
@@ -132,7 +139,6 @@ export default function App() {
         </header>
 
         <div className="px-4 py-5 max-w-lg mx-auto space-y-5">
-          {/* Session size */}
           <div>
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">1回のセッション</p>
             <div className="grid grid-cols-4 gap-2">
@@ -157,7 +163,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Mode buttons */}
           <div>
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">学習モード</p>
             <div className="space-y-2">
@@ -178,7 +183,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Word list link */}
           <button
             onClick={() => setScreen({ type: 'list', category })}
             className="w-full flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-left active:scale-95"
@@ -215,7 +219,6 @@ export default function App() {
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
-        {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white rounded-2xl p-4 text-center shadow-sm">
             <p className="text-3xl font-bold text-indigo-600">{vocabulary.length}</p>
@@ -231,7 +234,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Today's lesson */}
         <button
           onClick={() => {
             setSessionSize(10);
@@ -249,7 +251,18 @@ export default function App() {
           </p>
         </button>
 
-        {/* Categories */}
+        <button
+          onClick={() => setScreen({ type: 'stats' })}
+          className="w-full flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-left active:scale-95"
+        >
+          <span className="text-3xl">📈</span>
+          <div>
+            <p className="font-bold text-gray-800">積み上げを見る</p>
+            <p className="text-sm text-gray-400">カレンダー・レベル分布・カテゴリ別</p>
+          </div>
+          <span className="ml-auto text-gray-300">›</span>
+        </button>
+
         <div>
           <h2 className="text-lg font-bold text-gray-700 mb-3">カテゴリ別</h2>
           <div className="grid grid-cols-2 gap-3">

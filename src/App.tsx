@@ -5,6 +5,7 @@ import { IntroCards } from './components/IntroCards';
 import { TypingQuiz } from './components/TypingQuiz';
 import { FlashCard } from './components/FlashCard';
 import { WordList } from './components/WordList';
+import { StatsPage } from './components/StatsPage';
 import { useProgress, getMasteryLevel } from './hooks/useProgress';
 import { useStreak } from './hooks/useStreak';
 import { Progress } from './context/ProgressContext';
@@ -13,6 +14,7 @@ type Mode = 'flashcard' | 'typing-kr' | 'typing-jp' | 'typing-both';
 
 type Screen =
   | { type: 'home' }
+  | { type: 'stats' }
   | { type: 'category'; category: Category | 'all' }
   | { type: 'intro'; words: Word[]; mode: Mode; returnTo: Category | 'all' }
   | { type: 'study'; words: Word[]; mode: Mode; returnTo: Category | 'all' }
@@ -57,6 +59,11 @@ export default function App() {
 
   const goBack = (to: Category | 'all') =>
     setScreen(to === 'all' ? { type: 'home' } : { type: 'category', category: to });
+
+  // Stats page
+  if (screen.type === 'stats') {
+    return <StatsPage onBack={() => setScreen({ type: 'home' })} />;
+  }
 
   // Intro phase
   if (screen.type === 'intro') {
@@ -247,6 +254,19 @@ export default function App() {
               ? `新しい単語 ${todayWords.filter(w => !progress[w.id]).length}語を含む10語`
               : '学習済みの単語を復習'}
           </p>
+        </button>
+
+        {/* Stats link */}
+        <button
+          onClick={() => setScreen({ type: 'stats' })}
+          className="w-full flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-left active:scale-95"
+        >
+          <span className="text-3xl">📈</span>
+          <div>
+            <p className="font-bold text-gray-800">積み上げを見る</p>
+            <p className="text-sm text-gray-400">カレンダー・レベル分布・カテゴリ別</p>
+          </div>
+          <span className="ml-auto text-gray-300">›</span>
         </button>
 
         {/* Categories */}

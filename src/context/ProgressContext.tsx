@@ -4,6 +4,8 @@ export interface WordProgress {
   correct: number;
   incorrect: number;
   lastStudied: number;
+  interval?: number;   // days until next review (SRS)
+  nextReview?: number; // timestamp ms
 }
 
 export type Progress = Record<number, WordProgress>;
@@ -48,6 +50,7 @@ interface ProgressCtx {
   getMastery: (wordId: number) => 0 | 1 | 2 | 3;
   totalStudied: number;
   accuracy: number;
+  xp: number;
 }
 
 const Ctx = createContext<ProgressCtx | null>(null);
@@ -59,12 +62,17 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const recordResult = useCallback((wordId: number, correct: boolean) => {
     setProgress(prev => {
       const existing = prev[wordId] ?? { correct: 0, incorrect: 0, lastStudied: 0 };
+      // SM-2-style: correct → interval ×2.5, incorrect → reset to 1 day
+      const currentInterval = existing.interval ?? 1;
+      const newInterval = correct ? Math.max(1, Math.round(currentInterval * 2.5)) : 1;
       const updated: Progress = {
         ...prev,
         [wordId]: {
           correct: existing.correct + (correct ? 1 : 0),
           incorrect: existing.incorrect + (correct ? 0 : 1),
           lastStudied: Date.now(),
+          interval: newInterval,
+          nextReview: Date.now() + newInterval * 86_400_000,
         },
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
@@ -101,9 +109,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const totalCorrect = Object.values(progress).reduce((s, p) => s + p.correct, 0);
   const totalAttempts = Object.values(progress).reduce((s, p) => s + p.correct + p.incorrect, 0);
   const accuracy = totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
+  const xp = totalCorrect * 10;
 
   return (
-    <Ctx.Provider value={{ progress, activity, recordResult, resetProgress, getWordProgress, getMastery, totalStudied, accuracy }}>
+    <Ctx.Provider value={{ progress, activity, recordResult, resetProgress, getWordProgress, getMastery, totalStudied, accuracy, xp }}>
       {children}
     </Ctx.Provider>
   );

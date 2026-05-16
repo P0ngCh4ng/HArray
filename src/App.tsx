@@ -4,13 +4,14 @@ import { IntroCards } from './components/IntroCards';
 import { TypingQuiz } from './components/TypingQuiz';
 import { FlashCard } from './components/FlashCard';
 import { SentenceQuiz } from './components/SentenceQuiz';
+import { ListeningQuiz } from './components/ListeningQuiz';
 import { WordList } from './components/WordList';
 import { StatsPage } from './components/StatsPage';
-import { useProgress, getMasteryLevel } from './hooks/useProgress';
+import { useProgress } from './hooks/useProgress';
 import { useStreak } from './hooks/useStreak';
 import { Progress } from './context/ProgressContext';
 
-type Mode = 'flashcard' | 'typing-kr' | 'typing-jp' | 'typing-both' | 'sentence';
+type Mode = 'flashcard' | 'typing-kr' | 'typing-jp' | 'typing-both' | 'sentence' | 'listening';
 
 type Screen =
   | { type: 'home' }
@@ -25,23 +26,29 @@ const MODE_LABELS: Record<Mode, { icon: string; label: string; desc: string }> =
   'typing-jp':  { icon: '🇯🇵', label: '日 → 韓',        desc: '意味を見てハングルを入力' },
   'typing-both':{ icon: '✏️',  label: '韓 ↔ 日',        desc: '両方向をランダムで出題' },
   'sentence':   { icon: '📝',  label: '例文で覚える',     desc: '文の中で単語を答える' },
+  'listening':  { icon: '🔊',  label: 'リスニング',       desc: '音声を聞いて意味を入力' },
 };
 
 const SESSION_SIZES = [5, 10, 20, Infinity] as const;
 
 function selectWords(all: Word[], progress: Progress, count: number): Word[] {
+  const now = Date.now();
+  // SRS: due words first (overdue → soonest), then unseen, then not-yet-due
+  const due = all
+    .filter(w => progress[w.id] && (progress[w.id].nextReview ?? 0) <= now)
+    .sort((a, b) => (progress[a.id].nextReview ?? 0) - (progress[b.id].nextReview ?? 0));
   const unseen = all.filter(w => !progress[w.id]).sort(() => Math.random() - 0.5);
-  const seen = all
-    .filter(w => progress[w.id])
-    .sort((a, b) => getMasteryLevel(progress[a.id]) - getMasteryLevel(progress[b.id]));
-  const ordered = [...unseen, ...seen];
+  const notDue = all
+    .filter(w => progress[w.id] && (progress[w.id].nextReview ?? 0) > now)
+    .sort((a, b) => (progress[a.id].nextReview ?? 0) - (progress[b.id].nextReview ?? 0));
+  const ordered = [...due, ...unseen, ...notDue];
   return count === Infinity ? ordered : ordered.slice(0, count);
 }
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>({ type: 'home' });
   const [sessionSize, setSessionSize] = useState<number>(10);
-  const { totalStudied, accuracy, resetProgress, progress } = useProgress();
+  const { totalStudied, accuracy, resetProgress, progress, xp } = useProgress();
   const { streak, checkIn } = useStreak();
 
   const startSession = (mode: Mode, size: number) => {
@@ -90,6 +97,7 @@ export default function App() {
         {mode === 'typing-jp'   && <TypingQuiz words={words} direction="jp-kr" onBack={onBack} onComplete={onComplete} />}
         {mode === 'typing-both' && <TypingQuiz words={words} direction="both"  onBack={onBack} onComplete={onComplete} />}
         {mode === 'sentence'    && <SentenceQuiz words={words} onBack={onBack} onComplete={onComplete} />}
+        {mode === 'listening'   && <ListeningQuiz words={words} onBack={onBack} onComplete={onComplete} />}
       </div>
     );
   }
@@ -107,9 +115,11 @@ export default function App() {
   }
 
   // Home screen
+  const now = Date.now();
+  const dueCount = vocabulary.filter(w => progress[w.id] && (progress[w.id].nextReview ?? 0) <= now).length;
+  const unseenCount = vocabulary.filter(w => !progress[w.id]).length;
   const todayWords = selectWords(vocabulary, progress, 10);
   const todayHasNew = todayWords.some(w => !progress[w.id]);
-  const unseenCount = vocabulary.filter(w => !progress[w.id]).length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -118,12 +128,20 @@ export default function App() {
           <h1 className="text-2xl font-bold text-indigo-600">한국어 단어장</h1>
           <p className="text-sm text-gray-400">韓国語単語帳</p>
         </div>
-        {streak > 0 && (
-          <div className="flex items-center gap-1 bg-orange-50 px-3 py-1.5 rounded-full">
-            <span className="text-lg">🔥</span>
-            <span className="font-bold text-orange-600">{streak}日</span>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          {xp > 0 && (
+            <div className="flex items-center gap-1 bg-indigo-50 px-3 py-1.5 rounded-full">
+              <span className="text-sm">⚡</span>
+              <span className="font-bold text-indigo-600 text-sm">{xp} XP</span>
+            </div>
+          )}
+          {streak > 0 && (
+            <div className="flex items-center gap-1 bg-orange-50 px-3 py-1.5 rounded-full">
+              <span className="text-lg">🔥</span>
+              <span className="font-bold text-orange-600">{streak}日</span>
+            </div>
+          )}
+        </div>
       </header>
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-5">
@@ -149,12 +167,14 @@ export default function App() {
           className="w-full bg-indigo-600 text-white rounded-2xl p-5 text-left hover:bg-indigo-700 transition-colors shadow-sm"
         >
           <p className="text-lg font-bold">
-            {todayHasNew ? '📚 今日のレッスン' : '🔄 復習する'}
+            {dueCount > 0 ? '📅 復習タイム' : todayHasNew ? '📚 今日のレッスン' : '✅ 全部復習済み'}
           </p>
           <p className="text-sm text-indigo-200 mt-1">
-            {todayHasNew
+            {dueCount > 0
+              ? `復習 ${dueCount}語${unseenCount > 0 ? ` + 新しい単語 ${unseenCount}語` : ''}`
+              : todayHasNew
               ? `新しい単語 ${unseenCount}語を含む10語`
-              : '学習済みの単語を復習'}
+              : '次の復習まで待つか、自由に練習しよう'}
           </p>
         </button>
 

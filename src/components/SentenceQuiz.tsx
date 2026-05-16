@@ -12,8 +12,12 @@ interface Props {
 
 type Phase = 'question' | 'correct' | 'wrong';
 
+function stripParens(s: string) {
+  return s.replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '').trim();
+}
+
 function normalize(s: string) {
-  return s.trim().replace(/\s+/g, ' ');
+  return s.trim().replace(/[。、！？!?.…,，]/g, '').replace(/\s+/g, ' ').trim();
 }
 
 function parseSentence(text: string): { part: string; highlighted: boolean }[] {
@@ -65,7 +69,7 @@ export function SentenceQuiz({ words, onBack, onComplete }: Props) {
   }, [finished, onComplete]);
 
   const correctAnswer = current
-    ? current.word.example.japanese.match(/\[\[(.+?)\]\]/)?.[1] ?? ''
+    ? stripParens(current.word.example.japanese.match(/\[\[(.+?)\]\]/)?.[1] ?? '')
     : '';
 
   const check = () => {

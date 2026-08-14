@@ -3,6 +3,7 @@ import { Word } from '../data/vocabulary';
 import { useAdaptiveQueue } from '../hooks/useAdaptiveQueue';
 import { SessionComplete } from './SessionComplete';
 import { SpeakButton } from './SpeakButton';
+import { checkJapanese, checkKorean } from '../utils/answer';
 
 interface Props {
   words: Word[];
@@ -16,10 +17,6 @@ type Direction = 'kr-jp' | 'jp-kr';
 
 function stripParens(s: string) {
   return s.replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '').trim();
-}
-
-function normalize(s: string) {
-  return s.trim().replace(/[。、！？!?.…,，]/g, '').replace(/\s+/g, ' ').trim();
 }
 
 export function TypingQuiz({ words, direction: directionProp, onBack, onComplete }: Props) {
@@ -56,7 +53,10 @@ export function TypingQuiz({ words, direction: directionProp, onBack, onComplete
 
   const check = () => {
     if (phase !== 'question' || !input.trim() || !current) return;
-    const correct = normalize(input) === normalize(correctAnswer);
+    const { meaning, korean, accept = [] } = current.word;
+    const correct = direction === 'kr-jp'
+      ? checkJapanese(input, [meaning, ...accept])
+      : checkKorean(input, [korean]);
     setPhase(correct ? 'correct' : 'wrong');
   };
 

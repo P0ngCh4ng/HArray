@@ -3,6 +3,7 @@ import { Word } from '../data/vocabulary';
 import { useAdaptiveQueue } from '../hooks/useAdaptiveQueue';
 import { SessionComplete } from './SessionComplete';
 import { SpeakButton } from './SpeakButton';
+import { checkJapanese } from '../utils/answer';
 
 interface Props {
   words: Word[];
@@ -16,8 +17,9 @@ function stripParens(s: string) {
   return s.replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '').trim();
 }
 
-function normalize(s: string) {
-  return s.trim().replace(/[。、！？!?.…,，]/g, '').replace(/\s+/g, ' ').trim();
+/** 例文中の [[...]] で囲まれた部分を取り出す。 */
+function targetSpan(sentence: string): string {
+  return sentence.match(/\[\[(.+?)\]\]/)?.[1] ?? '';
 }
 
 function parseSentence(text: string): { part: string; highlighted: boolean }[] {
@@ -69,13 +71,20 @@ export function SentenceQuiz({ words, onBack, onComplete }: Props) {
   }, [finished, onComplete]);
 
   const correctAnswer = current
-    ? stripParens(current.word.example.japanese.match(/\[\[(.+?)\]\]/)?.[1] ?? '')
+    ? stripParens(targetSpan(current.word.example.japanese))
     : '';
 
   const check = () => {
     if (phase !== 'question' || !input.trim() || !current) return;
-    const correct = normalize(input) === normalize(correctAnswer);
-    setPhase(correct ? 'correct' : 'wrong');
+    const { meaning, accept = [], example } = current.word;
+    // 例文中の形（行きます）でも、単語そのものの意味（行く／いく）でも正解にする
+    const candidates = [
+      targetSpan(example.japanese),
+      ...(example.accept ?? []),
+      meaning,
+      ...accept,
+    ];
+    setPhase(checkJapanese(input, candidates) ? 'correct' : 'wrong');
   };
 
   const next = () => {

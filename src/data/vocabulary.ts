@@ -3,6 +3,7 @@ export type Category = 'あいさつ' | '数字' | '食べ物' | '色' | '家族
 export interface Example {
   korean: string;
   japanese: string;
+  accept?: string[]; // [[target]] 部分の別解（かな読みなど）
 }
 
 export interface Word {
@@ -10,6 +11,7 @@ export interface Word {
   korean: string;
   reading: string;
   meaning: string;
+  accept?: string[]; // meaning の別解（かな読み・短縮形・同義語）
   category: Category;
   level: 1 | 2 | 3;
   example: Example;

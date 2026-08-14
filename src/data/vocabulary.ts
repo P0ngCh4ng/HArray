@@ -1,4 +1,6 @@
-export type Category = 'あいさつ' | '数字' | '食べ物' | '色' | '家族' | '日常会話' | '動詞' | '形容詞' | '場所' | '時間';
+export type Category =
+  | 'あいさつ' | '数字' | '食べ物' | '色' | '家族' | '日常会話' | '動詞' | '形容詞' | '場所' | '時間'
+  | '天気' | '交通' | '身体' | '動物' | '職業' | '疑問詞';
 
 export interface Example {
   korean: string;
@@ -32,7 +34,7 @@ export const vocabulary: Word[] = [
   { id: 9, korean: '일', reading: 'イル', meaning: '一（漢数字）', accept: ['1', 'いち', '一'], category: '数字', level: 1, example: { korean: '[[일]]층에 편의점이 있어요.', japanese: '[[一]]階にコンビニがあります。', accept: ['いち', '1'] } },
   { id: 10, korean: '이', reading: 'イ', meaning: '二（漢数字）', accept: ['2', 'に', '二'], category: '数字', level: 1, example: { korean: '자녀가 [[이]]명 있어요.', japanese: '子供が[[二]]人います。', accept: ['に', '2'] } },
   { id: 11, korean: '삼', reading: 'サム', meaning: '三（漢数字）', accept: ['3', 'さん', '三'], category: '数字', level: 1, example: { korean: '[[삼]]일 동안 쉬었어요.', japanese: '[[三]]日間休みました。', accept: ['さん', '3'] } },
-  { id: 12, korean: '사', reading: 'サ', meaning: '四（漢数字）', accept: ['4', 'よん', 'し', '四'], category: '数字', level: 1, example: { korean: '[[사]]월에 벚꽃이 피어요.', japanese: '[[四]]月に桜が咲きます。', accept: ['よん', 'し', '4'] } },
+  { id: 12, korean: '사', reading: 'サ', meaning: '四（漢数字）', accept: ['4', 'よん', '四'], category: '数字', level: 1, example: { korean: '[[사]]월에 벚꽃이 피어요.', japanese: '[[四]]月に桜が咲きます。', accept: ['よん', '4'] } },
   { id: 13, korean: '오', reading: 'オ', meaning: '五（漢数字）', accept: ['5', 'ご', '五'], category: '数字', level: 1, example: { korean: '[[오]]분 후에 도착해요.', japanese: '[[五]]分後に到着します。', accept: ['ご', '5'] } },
   { id: 14, korean: '하나', reading: 'ハナ', meaning: '一つ（固有数字）', accept: ['1つ', 'ひとつ', '一つ'], category: '数字', level: 1, example: { korean: '사과 [[하나]] 주세요.', japanese: 'りんご[[一つ]]ください。', accept: ['ひとつ', '1つ'] } },
   { id: 15, korean: '둘', reading: 'トゥル', meaning: '二つ（固有数字）', accept: ['2つ', 'ふたつ', '二つ'], category: '数字', level: 1, example: { korean: '커피 [[둘]] 주세요.', japanese: 'コーヒー[[二つ]]ください。', accept: ['ふたつ', '2つ'] } },
@@ -72,7 +74,7 @@ export const vocabulary: Word[] = [
   { id: 41, korean: '괜찮아요', reading: 'クェンチャナヨ', meaning: '大丈夫です', accept: ['だいじょうぶです', 'だいじょうぶ'], category: '日常会話', level: 1, example: { korean: '걱정 마세요. [[괜찮아요]].', japanese: '心配しないでください。[[大丈夫です]]。', accept: ['だいじょうぶです', 'だいじょうぶ'] } },
   { id: 42, korean: '모르겠어요', reading: 'モルゲッソヨ', meaning: 'わかりません', accept: ['わからない'], category: '日常会話', level: 1, example: { korean: '그 단어 뜻을 [[모르겠어요]].', japanese: 'その単語の意味が[[わかりません]]。', accept: ['わからない'] } },
   { id: 43, korean: '얼마예요?', reading: 'オルマエヨ', meaning: 'いくらですか？', accept: ['いくら'], category: '日常会話', level: 1, example: { korean: '이 가방 [[얼마예요?]]', japanese: 'このバッグ[[いくらですか？]]', accept: ['いくら'] } },
-  { id: 44, korean: '어디예요?', reading: 'オディエヨ', meaning: 'どこですか？', accept: ['どこ'], category: '日常会話', level: 1, example: { korean: '역이 [[어디예요?]]', japanese: '駅は[[どこですか？]]', accept: ['どこ'] } },
+  { id: 44, korean: '어디예요?', reading: 'オディエヨ', meaning: 'どこですか？', accept: ['どちらですか'], category: '日常会話', level: 1, example: { korean: '역이 [[어디예요?]]', japanese: '駅は[[どこですか？]]', accept: ['どちらですか'] } },
   { id: 45, korean: '화장실', reading: 'ファジャンシル', meaning: 'トイレ', accept: ['おてあらい', 'お手洗い', 'べんじょ'], category: '日常会話', level: 1, example: { korean: '[[화장실]]이 어디에 있어요?', japanese: '[[トイレ]]はどこにありますか？', accept: ['おてあらい', 'お手洗い', 'べんじょ'] } },
   { id: 46, korean: '맛있어요', reading: 'マシッソヨ', meaning: '美味しいです', accept: ['おいしいです', 'おいしい'], category: '日常会話', level: 1, example: { korean: '이 음식 정말 [[맛있어요]].', japanese: 'この料理は本当に[[美味しいです]]。', accept: ['おいしいです', 'おいしい'] } },
 
@@ -120,8 +122,131 @@ export const vocabulary: Word[] = [
   { id: 81, korean: '점심', reading: 'チョムシム', meaning: '昼', accept: ['ひる'], category: '時間', level: 1, example: { korean: '[[점심]]은 같이 먹어요.', japanese: '[[昼]]ご飯は一緒に食べましょう。', accept: ['ひる'] } },
   { id: 82, korean: '저녁', reading: 'チョニョク', meaning: '夕方・夕食', accept: ['ゆうがた', 'ゆうしょく'], category: '時間', level: 1, example: { korean: '[[저녁]] 먹었어요?', japanese: '[[夕方・夕食]]食べましたか？', accept: ['ゆうがた', 'ゆうしょく'] } },
   { id: 83, korean: '밤', reading: 'パム', meaning: '夜', accept: ['よる'], category: '時間', level: 1, example: { korean: '[[밤]]에 혼자 공부해요.', japanese: '[[夜]]一人で勉強します。', accept: ['よる'] } },
+
+  // あいさつ（追加）
+  { id: 84, korean: '잘 지냈어요?', reading: 'チャル チネッソヨ', meaning: '元気でしたか？', accept: ['げんきでしたか', 'おげんきでしたか'], category: 'あいさつ', level: 2, example: { korean: '오랜만이에요! [[잘 지냈어요?]]', japanese: 'お久しぶりです！[[元気でしたか？]]', accept: ['げんきでしたか'] } },
+  { id: 85, korean: '실례합니다', reading: 'シルレハムニダ', meaning: '失礼します', accept: ['しつれいします'], category: 'あいさつ', level: 2, example: { korean: '[[실례합니다]], 길 좀 묻겠습니다.', japanese: '[[失礼します]]、道をお尋ねします。', accept: ['しつれいします'] } },
+  { id: 86, korean: '잘 먹겠습니다', reading: 'チャル モッケッスムニダ', meaning: 'いただきます', category: 'あいさつ', level: 2, example: { korean: '[[잘 먹겠습니다]]!', japanese: '[[いただきます]]！' } },
+
+  // 数字（追加）
+  { id: 87, korean: '육', reading: 'ユク', meaning: '六（漢数字）', accept: ['6', 'ろく', '六'], category: '数字', level: 1, example: { korean: '[[육]]월에 여행 가요.', japanese: '[[六]]月に旅行に行きます。', accept: ['ろく', '6'] } },
+  { id: 88, korean: '칠', reading: 'チル', meaning: '七（漢数字）', accept: ['7', 'しち', 'なな', '七'], category: '数字', level: 1, example: { korean: '[[칠]]시에 만나요.', japanese: '[[七]]時に会いましょう。', accept: ['しち', 'なな', '7'] } },
+  { id: 89, korean: '팔', reading: 'パル', meaning: '八（漢数字）', accept: ['8', 'はち', '八'], category: '数字', level: 1, example: { korean: '[[팔]]층에 살아요.', japanese: '[[八]]階に住んでいます。', accept: ['はち', '8'] } },
+  { id: 90, korean: '구', reading: 'ク', meaning: '九（漢数字）', accept: ['9', 'きゅう', 'く', '九'], category: '数字', level: 1, example: { korean: '[[구]]월은 시원해요.', japanese: '[[九]]月は涼しいです。', accept: ['きゅう', '9'] } },
+  { id: 91, korean: '십', reading: 'シプ', meaning: '十（漢数字）', accept: ['10', 'じゅう', '十'], category: '数字', level: 1, example: { korean: '[[십]]분만 기다려 주세요.', japanese: '[[十]]分だけ待ってください。', accept: ['じゅう', '10'] } },
+  { id: 92, korean: '넷', reading: 'ネッ', meaning: '四つ（固有数字）', accept: ['4つ', 'よっつ', '四つ'], category: '数字', level: 1, example: { korean: '사과가 [[넷]] 있어요.', japanese: 'りんごが[[四つ]]あります。', accept: ['よっつ', '4つ'] } },
+
+  // 食べ物（追加）
+  { id: 93, korean: '빵', reading: 'ッパン', meaning: 'パン', category: '食べ物', level: 1, example: { korean: '아침에 [[빵]]을 먹어요.', japanese: '朝[[パン]]を食べます。' } },
+  { id: 94, korean: '우유', reading: 'ウユ', meaning: '牛乳', accept: ['ぎゅうにゅう', 'ミルク'], category: '食べ物', level: 1, example: { korean: '[[우유]]를 매일 마셔요.', japanese: '[[牛乳]]を毎日飲みます。', accept: ['ぎゅうにゅう', 'ミルク'] } },
+  { id: 95, korean: '고기', reading: 'コギ', meaning: '肉', accept: ['にく'], category: '食べ物', level: 1, example: { korean: '[[고기]]를 구워 먹어요.', japanese: '[[肉]]を焼いて食べます。', accept: ['にく'] } },
+  { id: 96, korean: '생선', reading: 'センソン', meaning: '魚', accept: ['さかな'], category: '食べ物', level: 2, example: { korean: '[[생선]]을 좋아해요.', japanese: '[[魚]]が好きです。', accept: ['さかな'] } },
+  { id: 97, korean: '과일', reading: 'クァイル', meaning: '果物', accept: ['くだもの', 'フルーツ'], category: '食べ物', level: 1, example: { korean: '[[과일]]을 많이 먹어요.', japanese: '[[果物]]をたくさん食べます。', accept: ['くだもの', 'フルーツ'] } },
+  { id: 98, korean: '야채', reading: 'ヤチェ', meaning: '野菜', accept: ['やさい'], category: '食べ物', level: 1, example: { korean: '[[야채]]도 드세요.', japanese: '[[野菜]]も召し上がってください。', accept: ['やさい'] } },
+  { id: 99, korean: '계란', reading: 'ケラン', meaning: '卵', accept: ['たまご'], category: '食べ物', level: 1, example: { korean: '[[계란]] 두 개 주세요.', japanese: '[[卵]]を二個ください。', accept: ['たまご'] } },
+
+  // 色（追加）
+  { id: 100, korean: '보라색', reading: 'ポラセク', meaning: '紫色', accept: ['むらさきいろ', 'むらさき'], category: '色', level: 2, example: { korean: '포도는 [[보라색]]이에요.', japanese: 'ぶどうは[[紫色]]です。', accept: ['むらさきいろ', 'むらさき'] } },
+  { id: 101, korean: '회색', reading: 'フェセク', meaning: '灰色', accept: ['はいいろ', 'グレー'], category: '色', level: 2, example: { korean: '구름이 [[회색]]이에요.', japanese: '雲が[[灰色]]です。', accept: ['はいいろ', 'グレー'] } },
+
+  // 家族（追加）
+  { id: 102, korean: '누나', reading: 'ヌナ', meaning: '姉（男性から）', accept: ['あね', 'おねえさん'], category: '家族', level: 1, example: { korean: '[[누나]]가 요리를 해 줬어요.', japanese: '[[姉（男性から）]]が料理を作ってくれました。', accept: ['あね', 'おねえさん'] } },
+  { id: 103, korean: '오빠', reading: 'オッパ', meaning: '兄（女性から）', accept: ['あに', 'おにいさん'], category: '家族', level: 1, example: { korean: '[[오빠]]는 회사에 다녀요.', japanese: '[[兄（女性から）]]は会社に通っています。', accept: ['あに', 'おにいさん'] } },
+  { id: 104, korean: '아들', reading: 'アドゥル', meaning: '息子', accept: ['むすこ'], category: '家族', level: 2, example: { korean: '[[아들]]이 대학생이에요.', japanese: '[[息子]]が大学生です。', accept: ['むすこ'] } },
+  { id: 105, korean: '딸', reading: 'ッタル', meaning: '娘', accept: ['むすめ'], category: '家族', level: 2, example: { korean: '[[딸]]이 노래를 잘해요.', japanese: '[[娘]]が歌が上手です。', accept: ['むすめ'] } },
+
+  // 日常会話（追加）
+  { id: 106, korean: '어서 오세요', reading: 'オソ オセヨ', meaning: 'いらっしゃいませ', category: '日常会話', level: 2, example: { korean: '[[어서 오세요]]! 몇 분이세요?', japanese: '[[いらっしゃいませ]]！何名様ですか？' } },
+  { id: 107, korean: '주세요', reading: 'チュセヨ', meaning: 'ください', category: '日常会話', level: 1, example: { korean: '물 좀 [[주세요]].', japanese: '水を[[ください]]。' } },
+  { id: 108, korean: '잠깐만요', reading: 'チャムッカンマニョ', meaning: 'ちょっと待ってください', accept: ['ちょっとまってください', 'ちょっとまって', 'まってください'], category: '日常会話', level: 2, example: { korean: '[[잠깐만요]], 금방 올게요.', japanese: '[[ちょっと待ってください]]、すぐ戻ります。', accept: ['ちょっとまってください', 'ちょっとまって'] } },
+  { id: 109, korean: '천만에요', reading: 'チョンマネヨ', meaning: 'どういたしまして', category: '日常会話', level: 2, example: { korean: '아니에요, [[천만에요]].', japanese: 'いいえ、[[どういたしまして]]。' } },
+  { id: 110, korean: '축하합니다', reading: 'チュカハムニダ', meaning: 'おめでとうございます', accept: ['おめでとう'], category: '日常会話', level: 2, example: { korean: '졸업 [[축하합니다]]!', japanese: '卒業[[おめでとうございます]]！', accept: ['おめでとう'] } },
+  { id: 111, korean: '사랑해요', reading: 'サランヘヨ', meaning: '愛しています', accept: ['あいしています', 'あいしてる'], category: '日常会話', level: 1, example: { korean: '엄마, [[사랑해요]].', japanese: 'お母さん、[[愛しています]]。', accept: ['あいしています', 'あいしてる'] } },
+
+  // 動詞（追加）
+  { id: 112, korean: '하다', reading: 'ハダ', meaning: 'する', accept: ['します'], category: '動詞', level: 1, example: { korean: '숙제를 [[해요]].', japanese: '宿題を[[します]]。', accept: ['する'] } },
+  { id: 113, korean: '되다', reading: 'テダ', meaning: 'なる', accept: ['なります'], category: '動詞', level: 2, example: { korean: '의사가 [[돼요]].', japanese: '医者に[[なります]]。', accept: ['なる'] } },
+  { id: 114, korean: '알다', reading: 'アルダ', meaning: '知る', accept: ['しる', 'しります'], category: '動詞', level: 1, example: { korean: '그 사람을 [[알아요]].', japanese: 'その人を[[知っています]]。', accept: ['しっています', 'しっている', 'しる'] } },
+  { id: 115, korean: '모르다', reading: 'モルダ', meaning: '知らない', accept: ['しらない'], category: '動詞', level: 1, example: { korean: '저는 [[몰라요]].', japanese: '私は[[知りません]]。', accept: ['しりません', 'しらない'] } },
+  { id: 116, korean: '좋아하다', reading: 'チョアハダ', meaning: '好きだ', accept: ['すきだ', 'すき', '好き'], category: '動詞', level: 1, example: { korean: '저는 커피를 [[좋아해요]].', japanese: '私はコーヒーが[[好きです]]。', accept: ['すきです', 'すき'] } },
+  { id: 117, korean: '싫어하다', reading: 'シロハダ', meaning: '嫌いだ', accept: ['きらいだ', 'きらい', '嫌い'], category: '動詞', level: 2, example: { korean: '저는 벌레를 [[싫어해요]].', japanese: '私は虫が[[嫌いです]]。', accept: ['きらいです', 'きらい'] } },
+  { id: 118, korean: '만나다', reading: 'マンナダ', meaning: '会う', accept: ['あう', 'あいます'], category: '動詞', level: 1, example: { korean: '친구를 [[만나요]].', japanese: '友達に[[会います]]。', accept: ['あいます', '会う', 'あう'] } },
+  { id: 119, korean: '기다리다', reading: 'キダリダ', meaning: '待つ', accept: ['まつ', 'まちます'], category: '動詞', level: 1, example: { korean: '여기서 [[기다려요]].', japanese: 'ここで[[待ちます]]。', accept: ['まちます', '待つ', 'まつ'] } },
+  { id: 120, korean: '일하다', reading: 'イラダ', meaning: '働く', accept: ['はたらく', 'はたらきます'], category: '動詞', level: 1, example: { korean: '회사에서 [[일해요]].', japanese: '会社で[[働きます]]。', accept: ['はたらきます', '働く', 'はたらく'] } },
+  { id: 121, korean: '공부하다', reading: 'コンブハダ', meaning: '勉強する', accept: ['べんきょうする', 'べんきょうします'], category: '動詞', level: 1, example: { korean: '한국어를 [[공부해요]].', japanese: '韓国語を[[勉強します]]。', accept: ['べんきょうします', '勉強する', 'べんきょうする'] } },
+
+  // 形容詞（追加）
+  { id: 122, korean: '덥다', reading: 'トプタ', meaning: '暑い', accept: ['あつい', 'あついです'], category: '形容詞', level: 1, example: { korean: '여름은 정말 [[더워요]].', japanese: '夏は本当に[[暑いです]]。', accept: ['あついです', 'あつい', '暑い'] } },
+  { id: 123, korean: '춥다', reading: 'チュプタ', meaning: '寒い', accept: ['さむい', 'さむいです'], category: '形容詞', level: 1, example: { korean: '겨울은 [[추워요]].', japanese: '冬は[[寒いです]]。', accept: ['さむいです', 'さむい', '寒い'] } },
+  { id: 124, korean: '재미있다', reading: 'チェミイッタ', meaning: '面白い', accept: ['おもしろい', 'おもしろいです'], category: '形容詞', level: 1, example: { korean: '이 영화는 [[재미있어요]].', japanese: 'この映画は[[面白いです]]。', accept: ['おもしろいです', 'おもしろい', '面白い'] } },
+  { id: 125, korean: '어렵다', reading: 'オリョプタ', meaning: '難しい', accept: ['むずかしい', 'むずかしいです'], category: '形容詞', level: 2, example: { korean: '한국어는 조금 [[어려워요]].', japanese: '韓国語は少し[[難しいです]]。', accept: ['むずかしいです', 'むずかしい', '難しい'] } },
+  { id: 126, korean: '쉽다', reading: 'シプタ', meaning: '易しい', accept: ['やさしい', 'かんたん', '簡単'], category: '形容詞', level: 2, example: { korean: '이 문제는 [[쉬워요]].', japanese: 'この問題は[[易しいです]]。', accept: ['やさしいです', 'やさしい', 'かんたん'] } },
+  { id: 127, korean: '비싸다', reading: 'ピッサダ', meaning: '高い（値段）', accept: ['たかい', 'たかいです'], category: '形容詞', level: 1, example: { korean: '이 옷은 너무 [[비싸요]].', japanese: 'この服はとても[[高いです]]。', accept: ['たかいです', 'たかい', '高い'] } },
+  { id: 128, korean: '싸다', reading: 'ッサダ', meaning: '安い', accept: ['やすい', 'やすいです'], category: '形容詞', level: 1, example: { korean: '이 가게는 [[싸요]].', japanese: 'この店は[[安いです]]。', accept: ['やすいです', 'やすい', '安い'] } },
+
+  // 場所（追加）
+  { id: 129, korean: '집', reading: 'チプ', meaning: '家', accept: ['いえ', 'うち'], category: '場所', level: 1, example: { korean: '[[집]]에 가고 싶어요.', japanese: '[[家]]に帰りたいです。', accept: ['いえ', 'うち'] } },
+  { id: 130, korean: '회사', reading: 'フェサ', meaning: '会社', accept: ['かいしゃ'], category: '場所', level: 1, example: { korean: '[[회사]]에 다녀요.', japanese: '[[会社]]に通っています。', accept: ['かいしゃ'] } },
+  { id: 131, korean: '식당', reading: 'シクタン', meaning: '食堂', accept: ['しょくどう', 'レストラン'], category: '場所', level: 1, example: { korean: '[[식당]]에서 점심을 먹어요.', japanese: '[[食堂]]で昼ご飯を食べます。', accept: ['しょくどう', 'レストラン'] } },
+  { id: 132, korean: '시장', reading: 'シジャン', meaning: '市場', accept: ['いちば', 'しじょう'], category: '場所', level: 2, example: { korean: '[[시장]]에서 과일을 샀어요.', japanese: '[[市場]]で果物を買いました。', accept: ['いちば', 'しじょう'] } },
+  { id: 133, korean: '공원', reading: 'コンウォン', meaning: '公園', accept: ['こうえん'], category: '場所', level: 1, example: { korean: '[[공원]]에서 산책해요.', japanese: '[[公園]]で散歩します。', accept: ['こうえん'] } },
+
+  // 時間（追加）
+  { id: 134, korean: '주말', reading: 'チュマル', meaning: '週末', accept: ['しゅうまつ'], category: '時間', level: 1, example: { korean: '[[주말]]에 뭐 해요?', japanese: '[[週末]]に何をしますか？', accept: ['しゅうまつ'] } },
+  { id: 135, korean: '시간', reading: 'シガン', meaning: '時間', accept: ['じかん'], category: '時間', level: 1, example: { korean: '[[시간]]이 없어요.', japanese: '[[時間]]がありません。', accept: ['じかん'] } },
+  { id: 136, korean: '하루', reading: 'ハル', meaning: '一日', accept: ['いちにち'], category: '時間', level: 2, example: { korean: '[[하루]] 종일 바빴어요.', japanese: '[[一日]]中忙しかったです。', accept: ['いちにち'] } },
+  { id: 137, korean: '올해', reading: 'オレ', meaning: '今年', accept: ['ことし'], category: '時間', level: 2, example: { korean: '[[올해]]는 한국에 갈 거예요.', japanese: '[[今年]]は韓国に行くつもりです。', accept: ['ことし'] } },
+  { id: 138, korean: '다음 주', reading: 'タウム チュ', meaning: '来週', accept: ['らいしゅう'], category: '時間', level: 2, example: { korean: '[[다음 주]]에 만나요.', japanese: '[[来週]]会いましょう。', accept: ['らいしゅう'] } },
+
+  // 天気
+  { id: 139, korean: '날씨', reading: 'ナルッシ', meaning: '天気', accept: ['てんき'], category: '天気', level: 1, example: { korean: '오늘 [[날씨]]가 좋아요.', japanese: '今日は[[天気]]がいいです。', accept: ['てんき'] } },
+  { id: 140, korean: '비', reading: 'ピ', meaning: '雨', accept: ['あめ'], category: '天気', level: 1, example: { korean: '[[비]]가 와요.', japanese: '[[雨]]が降っています。', accept: ['あめ'] } },
+  { id: 141, korean: '눈', reading: 'ヌン', meaning: '雪', accept: ['ゆき'], category: '天気', level: 1, example: { korean: '겨울에 [[눈]]이 많이 와요.', japanese: '冬に[[雪]]がたくさん降ります。', accept: ['ゆき'] } },
+  { id: 142, korean: '바람', reading: 'パラム', meaning: '風', accept: ['かぜ'], category: '天気', level: 1, example: { korean: '[[바람]]이 세게 불어요.', japanese: '[[風]]が強く吹きます。', accept: ['かぜ'] } },
+  { id: 143, korean: '구름', reading: 'クルム', meaning: '雲', accept: ['くも'], category: '天気', level: 2, example: { korean: '하늘에 [[구름]]이 많아요.', japanese: '空に[[雲]]が多いです。', accept: ['くも'] } },
+  { id: 144, korean: '맑다', reading: 'マクタ', meaning: '晴れている', accept: ['はれている', 'はれ', '晴れ'], category: '天気', level: 2, example: { korean: '오늘은 하늘이 [[맑아요]].', japanese: '今日は空が[[晴れています]]。', accept: ['はれています', 'はれ', '晴れ'] } },
+
+  // 交通
+  { id: 145, korean: '지하철', reading: 'チハチョル', meaning: '地下鉄', accept: ['ちかてつ'], category: '交通', level: 1, example: { korean: '[[지하철]]로 회사에 가요.', japanese: '[[地下鉄]]で会社に行きます。', accept: ['ちかてつ'] } },
+  { id: 146, korean: '버스', reading: 'ポス', meaning: 'バス', category: '交通', level: 1, example: { korean: '[[버스]]를 타고 왔어요.', japanese: '[[バス]]に乗って来ました。' } },
+  { id: 147, korean: '택시', reading: 'テクシ', meaning: 'タクシー', category: '交通', level: 1, example: { korean: '[[택시]]를 불렀어요.', japanese: '[[タクシー]]を呼びました。' } },
+  { id: 148, korean: '기차', reading: 'キチャ', meaning: '列車', accept: ['れっしゃ', 'きしゃ'], category: '交通', level: 2, example: { korean: '[[기차]]로 부산에 가요.', japanese: '[[列車]]で釜山に行きます。', accept: ['れっしゃ', 'きしゃ'] } },
+  { id: 149, korean: '자전거', reading: 'チャジョンゴ', meaning: '自転車', accept: ['じてんしゃ'], category: '交通', level: 1, example: { korean: '[[자전거]]를 타요.', japanese: '[[自転車]]に乗ります。', accept: ['じてんしゃ'] } },
+  { id: 150, korean: '비행기', reading: 'ピヘンギ', meaning: '飛行機', accept: ['ひこうき'], category: '交通', level: 1, example: { korean: '[[비행기]]가 곧 출발해요.', japanese: '[[飛行機]]がもうすぐ出発します。', accept: ['ひこうき'] } },
+
+  // 身体
+  { id: 151, korean: '머리', reading: 'モリ', meaning: '頭', accept: ['あたま'], category: '身体', level: 1, example: { korean: '[[머리]]가 아파요.', japanese: '[[頭]]が痛いです。', accept: ['あたま'] } },
+  { id: 152, korean: '얼굴', reading: 'オルグル', meaning: '顔', accept: ['かお'], category: '身体', level: 1, example: { korean: '[[얼굴]]이 빨개졌어요.', japanese: '[[顔]]が赤くなりました。', accept: ['かお'] } },
+  { id: 153, korean: '손', reading: 'ソン', meaning: '手', accept: ['て'], category: '身体', level: 1, example: { korean: '[[손]]을 씻으세요.', japanese: '[[手]]を洗ってください。', accept: ['て'] } },
+  { id: 154, korean: '발', reading: 'パル', meaning: '足', accept: ['あし'], category: '身体', level: 1, example: { korean: '[[발]]이 아파요.', japanese: '[[足]]が痛いです。', accept: ['あし'] } },
+  { id: 155, korean: '입', reading: 'イプ', meaning: '口', accept: ['くち'], category: '身体', level: 1, example: { korean: '[[입]]을 크게 벌리세요.', japanese: '[[口]]を大きく開けてください。', accept: ['くち'] } },
+  { id: 156, korean: '배', reading: 'ペ', meaning: 'お腹', accept: ['おなか', 'はら'], category: '身体', level: 1, example: { korean: '[[배]]가 고파요.', japanese: '[[お腹]]が空きました。', accept: ['おなか', 'はら'] } },
+
+  // 動物
+  { id: 157, korean: '개', reading: 'ケ', meaning: '犬', accept: ['いぬ'], category: '動物', level: 1, example: { korean: '[[개]]를 키워요.', japanese: '[[犬]]を飼っています。', accept: ['いぬ'] } },
+  { id: 158, korean: '고양이', reading: 'コヤンイ', meaning: '猫', accept: ['ねこ'], category: '動物', level: 1, example: { korean: '[[고양이]]가 자고 있어요.', japanese: '[[猫]]が寝ています。', accept: ['ねこ'] } },
+  { id: 159, korean: '새', reading: 'セ', meaning: '鳥', accept: ['とり'], category: '動物', level: 1, example: { korean: '[[새]]가 노래해요.', japanese: '[[鳥]]が歌います。', accept: ['とり'] } },
+  { id: 160, korean: '말', reading: 'マル', meaning: '馬', accept: ['うま'], category: '動物', level: 2, example: { korean: '[[말]]이 빨리 달려요.', japanese: '[[馬]]が速く走ります。', accept: ['うま'] } },
+  { id: 161, korean: '소', reading: 'ソ', meaning: '牛', accept: ['うし'], category: '動物', level: 2, example: { korean: '[[소]]가 풀을 먹어요.', japanese: '[[牛]]が草を食べます。', accept: ['うし'] } },
+  { id: 162, korean: '돼지', reading: 'テジ', meaning: '豚', accept: ['ぶた'], category: '動物', level: 2, example: { korean: '[[돼지]]는 똑똑해요.', japanese: '[[豚]]は賢いです。', accept: ['ぶた'] } },
+
+  // 職業
+  { id: 163, korean: '학생', reading: 'ハクセン', meaning: '学生', accept: ['がくせい'], category: '職業', level: 1, example: { korean: '저는 [[학생]]이에요.', japanese: '私は[[学生]]です。', accept: ['がくせい'] } },
+  { id: 164, korean: '선생님', reading: 'ソンセンニム', meaning: '先生', accept: ['せんせい'], category: '職業', level: 1, example: { korean: '[[선생님]]께 질문했어요.', japanese: '[[先生]]に質問しました。', accept: ['せんせい'] } },
+  { id: 165, korean: '의사', reading: 'ウィサ', meaning: '医者', accept: ['いしゃ'], category: '職業', level: 1, example: { korean: '그는 [[의사]]예요.', japanese: '彼は[[医者]]です。', accept: ['いしゃ'] } },
+  { id: 166, korean: '회사원', reading: 'フェサウォン', meaning: '会社員', accept: ['かいしゃいん'], category: '職業', level: 1, example: { korean: '아버지는 [[회사원]]이에요.', japanese: '父は[[会社員]]です。', accept: ['かいしゃいん'] } },
+  { id: 167, korean: '요리사', reading: 'ヨリサ', meaning: '料理人', accept: ['りょうりにん', 'コック', 'シェフ'], category: '職業', level: 2, example: { korean: '누나는 [[요리사]]예요.', japanese: '姉は[[料理人]]です。', accept: ['りょうりにん', 'コック', 'シェフ'] } },
+
+  // 疑問詞
+  { id: 168, korean: '뭐', reading: 'ムォ', meaning: '何', accept: ['なに', 'なん'], category: '疑問詞', level: 1, example: { korean: '이게 [[뭐]]예요?', japanese: 'これは[[何]]ですか？', accept: ['なに', 'なん'] } },
+  { id: 169, korean: '누구', reading: 'ヌグ', meaning: '誰', accept: ['だれ'], category: '疑問詞', level: 1, example: { korean: '저 사람은 [[누구]]예요?', japanese: 'あの人は[[誰]]ですか？', accept: ['だれ'] } },
+  { id: 170, korean: '언제', reading: 'オンジェ', meaning: 'いつ', category: '疑問詞', level: 1, example: { korean: '[[언제]] 만날까요?', japanese: '[[いつ]]会いましょうか？' } },
+  { id: 171, korean: '어디', reading: 'オディ', meaning: 'どこ', category: '疑問詞', level: 1, example: { korean: '[[어디]]에 가요?', japanese: '[[どこ]]に行きますか？' } },
+  { id: 172, korean: '왜', reading: 'ウェ', meaning: 'なぜ', accept: ['どうして'], category: '疑問詞', level: 1, example: { korean: '[[왜]] 늦었어요?', japanese: '[[なぜ]]遅れたのですか？', accept: ['どうして'] } },
+  { id: 173, korean: '어떻게', reading: 'オットケ', meaning: 'どうやって', accept: ['どのように'], category: '疑問詞', level: 2, example: { korean: '[[어떻게]] 가요?', japanese: '[[どうやって]]行きますか？', accept: ['どのように'] } },
 ];
 
 export const categories: Category[] = [
-  'あいさつ', '数字', '食べ物', '色', '家族', '日常会話', '動詞', '形容詞', '場所', '時間'
+  'あいさつ', '数字', '食べ物', '色', '家族', '日常会話', '動詞', '形容詞', '場所', '時間',
+  '天気', '交通', '身体', '動物', '職業', '疑問詞'
 ];

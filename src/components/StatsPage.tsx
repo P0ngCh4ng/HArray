@@ -10,7 +10,8 @@ interface Props {
 const CATEGORY_EMOJI: Record<Category, string> = {
   'あいさつ': '👋', '数字': '🔢', '食べ物': '🍜', '色': '🎨',
   '家族': '👨‍👩‍👧', '日常会話': '💬', '動詞': '🏃', '形容詞': '✨',
-  '場所': '📍', '時間': '⏰',
+  '場所': '📍', '時間': '⏰', '天気': '☀️', '交通': '🚇',
+  '身体': '🖐️', '動物': '🐶', '職業': '💼', '疑問詞': '❓',
 };
 
 const LEVEL_META = [
@@ -173,10 +174,12 @@ export function StatsPage({ onBack }: Props) {
                     <span className="text-xs text-gray-400">{mastered}/{total}語習得</span>
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-2 relative">
+                    {/* studied (lighter) */}
                     <div
                       className="h-2 rounded-full bg-indigo-200 absolute transition-all duration-500"
                       style={{ width: `${studiedPct}%` }}
                     />
+                    {/* mastered (darker) on top */}
                     <div
                       className="h-2 rounded-full bg-indigo-600 absolute transition-all duration-500"
                       style={{ width: `${pct}%` }}

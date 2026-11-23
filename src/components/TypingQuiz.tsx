@@ -52,11 +52,15 @@ export function TypingQuiz({ words, direction: directionProp, onBack, onComplete
     : '';
 
   const check = () => {
-    if (phase !== 'question' || !input.trim() || !current) return;
+    if (phase !== 'question' || !current) return;
+    // IME の変換が state に反映される前に Enter が来ても取りこぼさないよう、
+    // 入力欄の実際の値を見る
+    const typed = inputRef.current?.value ?? input;
+    if (!typed.trim()) return;
     const { meaning, korean, accept = [] } = current.word;
     const correct = direction === 'kr-jp'
-      ? checkJapanese(input, [meaning, ...accept])
-      : checkKorean(input, [korean]);
+      ? checkJapanese(typed, [meaning, ...accept])
+      : checkKorean(typed, [korean]);
     setPhase(correct ? 'correct' : 'wrong');
   };
 
@@ -65,10 +69,12 @@ export function TypingQuiz({ words, direction: directionProp, onBack, onComplete
     submitAnswer(phase === 'correct');
   };
 
-  const handleKey = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      phase === 'question' ? check() : next();
-    }
+  const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // IME 変換中の Enter は「変換の確定」なので、解答の送信と取り違えない。
+    // これを無視しないと、未変換のかなやハングルがそのまま送信されてしまう。
+    if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+    if (e.key !== 'Enter') return;
+    phase === 'question' ? check() : next();
   };
 
   if (finished) {
@@ -163,6 +169,7 @@ export function TypingQuiz({ words, direction: directionProp, onBack, onComplete
           lang={direction === 'jp-kr' ? 'ko' : undefined}
           value={input}
           onChange={e => setInput(e.target.value)}
+          onCompositionEnd={e => setInput(e.currentTarget.value)}
           onKeyDown={handleKey}
           disabled={phase !== 'question'}
           placeholder={direction === 'kr-jp' ? '日本語で意味を入力…' : 'ハングルで入力…'}

@@ -77,7 +77,11 @@ export function SentenceQuiz({ words, onBack, onComplete }: Props) {
     : '';
 
   const check = () => {
-    if (phase !== 'question' || !input.trim() || !current) return;
+    if (phase !== 'question' || !current) return;
+    // IME の変換が state に反映される前に Enter が来ても取りこぼさないよう、
+    // 入力欄の実際の値を見る
+    const typed = inputRef.current?.value ?? input;
+    if (!typed.trim()) return;
     const { meaning, accept = [], example } = current.word;
     // 例文中の形（行きます）でも、単語そのものの意味（行く／いく）でも正解にする
     const candidates = [
@@ -86,7 +90,7 @@ export function SentenceQuiz({ words, onBack, onComplete }: Props) {
       meaning,
       ...accept,
     ];
-    setPhase(checkJapanese(input, candidates) ? 'correct' : 'wrong');
+    setPhase(checkJapanese(typed, candidates) ? 'correct' : 'wrong');
   };
 
   const next = () => {
@@ -94,10 +98,11 @@ export function SentenceQuiz({ words, onBack, onComplete }: Props) {
     submitAnswer(phase === 'correct');
   };
 
-  const handleKey = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      phase === 'question' ? check() : next();
-    }
+  const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // IME 変換中の Enter は「変換の確定」なので、解答の送信と取り違えない
+    if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+    if (e.key !== 'Enter') return;
+    phase === 'question' ? check() : next();
   };
 
   if (finished) {
@@ -190,6 +195,7 @@ export function SentenceQuiz({ words, onBack, onComplete }: Props) {
           type="text"
           value={input}
           onChange={e => setInput(e.target.value)}
+          onCompositionEnd={e => setInput(e.currentTarget.value)}
           onKeyDown={handleKey}
           disabled={phase !== 'question'}
           placeholder="日本語で意味を入力…"

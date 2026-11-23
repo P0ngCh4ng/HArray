@@ -9,6 +9,7 @@ import { WordList } from './components/WordList';
 import { StatsPage } from './components/StatsPage';
 import { useProgress } from './hooks/useProgress';
 import { useStreak } from './hooks/useStreak';
+import { SPEECH_RATES, getSpeechRate, setSpeechRate, useSpeech } from './hooks/useSpeech';
 import { Progress } from './context/ProgressContext';
 
 type Mode = 'flashcard' | 'typing-kr' | 'typing-jp' | 'typing-both' | 'sentence' | 'listening';
@@ -50,6 +51,8 @@ export default function App() {
   const [sessionSize, setSessionSize] = useState<number>(10);
   const { totalStudied, accuracy, resetProgress, progress, xp } = useProgress();
   const { streak, checkIn } = useStreak();
+  const [rate, setRate] = useState<number>(getSpeechRate);
+  const { speak, isSupported: speechSupported, voiceName, hasKoreanVoice } = useSpeech();
 
   const startSession = (mode: Mode, size: number) => {
     const words = selectWords(vocabulary, progress, size);
@@ -200,6 +203,39 @@ export default function App() {
             })}
           </div>
         </div>
+
+        {/* Speech rate */}
+        {speechSupported && (
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">読み上げ速度</p>
+            <div className="grid grid-cols-3 gap-2">
+              {SPEECH_RATES.map(r => (
+                <button
+                  key={r.value}
+                  onClick={() => {
+                    setSpeechRate(r.value);
+                    setRate(r.value);
+                    speak('안녕하세요', { rate: r.value });
+                  }}
+                  className={`py-2 rounded-xl text-sm font-semibold transition-all ${
+                    rate === r.value
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'bg-white text-gray-600 border border-gray-200 hover:border-indigo-300'
+                  }`}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-gray-400 mt-1.5">
+              {!hasKoreanVoice
+                ? '⚠️ 韓国語の音声が未インストールです。端末の設定から追加すると発音が良くなります。'
+                : voiceName
+                ? `音声: ${voiceName}`
+                : '音声を読み込み中…'}
+            </p>
+          </div>
+        )}
 
         {/* Mode buttons */}
         <div>

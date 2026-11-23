@@ -20,7 +20,7 @@ function stripParens(s: string) {
 export function ListeningQuiz({ words, onBack, onComplete }: Props) {
   const { current, graduated, total, finished, submitAnswer, restart, hardWords, sessionAccuracy } =
     useAdaptiveQueue(words);
-  const { speak, isSupported } = useSpeech();
+  const { speak, isSupported, hasKoreanVoice } = useSpeech();
 
   const [input, setInput] = useState('');
   const [phase, setPhase] = useState<Phase>('question');
@@ -88,6 +88,13 @@ export function ListeningQuiz({ words, onBack, onComplete }: Props) {
 
   return (
     <div className="flex flex-col items-center gap-5 px-4 py-6 max-w-lg mx-auto">
+      {!hasKoreanVoice && (
+        <div className="w-full bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
+          この端末に韓国語の音声が入っていないため、発音が正しく聞こえない場合があります。
+          端末の設定から韓国語の音声を追加すると改善します。
+        </div>
+      )}
+
       {/* Progress */}
       <div className="w-full">
         <div className="flex justify-between text-sm text-gray-500 mb-1">

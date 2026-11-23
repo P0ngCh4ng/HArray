@@ -166,7 +166,6 @@ export function TypingQuiz({ words, direction: directionProp, onBack, onComplete
         <input
           ref={inputRef}
           type="text"
-          lang={direction === 'jp-kr' ? 'ko' : undefined}
           value={input}
           onChange={e => setInput(e.target.value)}
           onCompositionEnd={e => setInput(e.currentTarget.value)}

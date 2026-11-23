@@ -3,6 +3,7 @@ import { Word } from '../data/vocabulary';
 import { useAdaptiveQueue } from '../hooks/useAdaptiveQueue';
 import { SessionComplete } from './SessionComplete';
 import { SpeakButton } from './SpeakButton';
+import { useSpeech } from '../hooks/useSpeech';
 import { checkJapanese } from '../utils/answer';
 
 interface Props {
@@ -53,6 +54,7 @@ function HighlightedSentence({ text, className = '' }: { text: string; className
 export function SentenceQuiz({ words, onBack, onComplete }: Props) {
   const { current, graduated, total, finished, submitAnswer, restart, hardWords, sessionAccuracy } =
     useAdaptiveQueue(words);
+  const { speak } = useSpeech();
 
   const [input, setInput] = useState('');
   const [phase, setPhase] = useState<Phase>('question');
@@ -147,12 +149,18 @@ export function SentenceQuiz({ words, onBack, onComplete }: Props) {
         </span>
 
         {/* Korean sentence with highlighted target word */}
-        <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex items-center justify-center gap-2 mb-2">
           <p className="text-2xl font-bold text-gray-900 font-korean leading-relaxed">
             <HighlightedSentence text={current.word.example.korean} />
           </p>
-          <SpeakButton text={current.word.korean} />
+          <SpeakButton text={current.word.example.korean} label="文を読み上げる" />
         </div>
+        <button
+          onClick={() => speak(current.word.korean)}
+          className="text-xs text-gray-400 hover:text-indigo-400 mb-4"
+        >
+          🔊 単語だけ聞く
+        </button>
 
         {/* Hint: show full Japanese sentence */}
         {showHint || phase !== 'question' ? (
